@@ -215,6 +215,8 @@
   - serializers.ModelSerializer는 READ 전용이라 봐야 하나..? 이유를 잘 모르겠다.
   - WRITE 전용 serializer는 normal Serializer를 사용해야 한다.
 
+### 1. Validation, Create & Save
+
 - Generic View를 사용하지 않고 직접 만들어주려면, data validation도 직접 해줘야 할 필요가 있다.
 
   - django form과 굉장히 유사하다.
@@ -227,7 +229,9 @@
   ```
 
 - serializer에서 기억해야 할 3가지 method.
+
   - 이 세가지를 알면 영원히 django framework을 만족할 거라는데...?? 그정도.로..?
+
     - create, update, save
     - create method
       ```python
@@ -240,5 +244,12 @@
     - save method를 room 만들 때 사용하면 error가 발생하는데, user id가 없어서이다.
     - save method에 user(Foreign Key)를 넘겨줘야 한다.
       <code>serializer.save(user=req.user)</code>
+
+  - validation은 django form의 clean과 굉장히 유사하다. clean*(form element)한 것처럼, validate*(element)로 데이터 검증을 하면 된다.
+
+    - error handling: raise serializers.ValidationError().
+      - 사용할 때에는.. return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  - field를 한 개씩만 validation을 할 때에는 위의 방법으로 하면 되지만, data가 연계되어 있다고 하면, validate 함수를 overriding을 해야 한다.
 
 ## Graphql Python

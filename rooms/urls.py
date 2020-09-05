@@ -18,7 +18,7 @@ urlpatterns = router.urls"""
 urlpatterns = [
     path(
         "list/",
-        views.room_list,
+        views.RoomListView.as_view(),
     ),
-    path("<int:pk>/", views.room_detail),
+    path("<int:pk>/", views.RoomDetailView.as_view()),
 ]
