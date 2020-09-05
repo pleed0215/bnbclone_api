@@ -203,4 +203,42 @@
   - 문제는 보안.
     - CRUD를 모두 다룰 수 있도록 해주기 때문에 이런 부분은 설정이 필요하다.
 
+## POST method
+
+- 강의에 뭔가 일관되지 않다. 이유는 어려운 방법부터 알려줘야 나중에 framework 라이브러리 사용의 이유를 알 수 있다 하여서..
+
+  - 니코 강의는 항상 이런식이긴 하다. 근데 이번엔 조금 많이 왔다 갔다 한다.
+
+- 다시 function based view
+
+  - POST method와 GET method용 serializer가 각각 다르다.
+  - serializers.ModelSerializer는 READ 전용이라 봐야 하나..? 이유를 잘 모르겠다.
+  - WRITE 전용 serializer는 normal Serializer를 사용해야 한다.
+
+- Generic View를 사용하지 않고 직접 만들어주려면, data validation도 직접 해줘야 할 필요가 있다.
+
+  - django form과 굉장히 유사하다.
+
+  ```python
+    if serializer.is_valid():
+              return Response(status=status.HTTP_200_OK)
+          else:
+              return Response(status=status.HTTP_400_BAD_REQUEST)
+  ```
+
+- serializer에서 기억해야 할 3가지 method.
+  - 이 세가지를 알면 영원히 django framework을 만족할 거라는데...?? 그정도.로..?
+    - create, update, save
+    - create method
+      ```python
+        class RoomSerializer(serailizers.Serializer):
+          ...
+          def create(self, validated_data):
+            Room.objects.create(**validated_data)
+      ```
+    - create method는 직접적으로 호출해서는 안된다. save method를 호출해야 한다.
+    - save method를 room 만들 때 사용하면 error가 발생하는데, user id가 없어서이다.
+    - save method에 user(Foreign Key)를 넘겨줘야 한다.
+      <code>serializer.save(user=req.user)</code>
+
 ## Graphql Python

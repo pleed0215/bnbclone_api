@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "/Users/pleed0215/.local/share/virtualenvs/awesome-api-course-fn7G9RYD/bin/python"
+    "python.pythonPath": "/Users/pleed0215/.local/share/virtualenvs/bnbclone_api-cU6azb0h/bin/python",
+    "python.formatting.provider": "black",
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
 }
