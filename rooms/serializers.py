@@ -16,3 +16,11 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = '__all__'
+
+
+class TinyRoomSerializer(serializers.ModelSerializer):
+    user = TinyUserSerializer()
+
+    class Meta:
+        model = Room
+        fields = ('name', 'user', 'price', 'bedrooms', 'bathrooms', 'beds')

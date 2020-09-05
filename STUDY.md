@@ -114,4 +114,93 @@
         fields = '__all__' # 모든 필드를 넣고 싶으면 이렇게 하면 된다.
   ```
 
+### 4. Class Based View
+
+- django와 마찬가지로 django rest framework에도 view class가 있다.
+
+  - 기본적인 django의 View와 마찬가지인 view class로는 APIView(rest_franework.views.APIView)가 있다.
+    - Custom Logic을 사용해야 할 때 보통 사용.
+  - 물론 필요한 작업들을 위해 미리 만들어진 Generic View와 같은 View가 역시나 존재한다.
+  - 위의 room_list를 class로 만들면 아래와 같다.
+    ```python
+    class ListRoomView(APIView):
+      def get(self, request):
+          rooms = Room.objects.all()
+          rooms_serialized = RoomSerializer(rooms, many=True)
+          return Response(data=rooms_serialized.data)
+    ```
+  - 위의 코드를 Generic view 중 하나인 ListAPIView로 recap해보면..
+
+  ```python
+    class ListRoomView(ListAPIView):
+      queryset = Room.objects.all()
+      serializer_class = RoomSerializer
+  ```
+
+- 참고사항
+  - django generic views들이 여러가지 클래스들을 상속 받다보니, 그 구조를 한눈에 보기 어려워서 ccbv.co.uk라는 사이트를 참고했었다.
+  - django rest framework에도 마찬가지로 여러가지 클래스들을 상속받아 generic view들의 구조를 한눈에 파악하기가 쉽지 않다.
+  - https://cdrf.co
+    - 여기로 가면 ccbv.co.uk처럼 rest framework generic view의 구조를 확인할 수 있다.
+
+### 5. Pagination
+
+- config.settings에 추가해줄 것이 좀 있다.
+
+```python
+    REST_FRAMEWORK = {
+      'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+      'PAGE_SIZE': 100
+    }
+```
+
+- 항상 그렇듯.. 이러한 내용은 공식 documentation에 다 있는 내용.
+
+  - DEFAULT_PAGINATION_CLASS
+    - 위에 documentation에서 긁어온 class는 offset과 limit를 url에 query로 넘겨줘서 pagination 범위를 정해주는 클래스.
+    - PageNumberPagination
+      - rest_framework.pagination.PageNumberPagination
+      - URL에서는 이런식으로 작동한다.
+        <code>GET https://api.example.org/accounts/?page=4</code>
+
+- 각 view에도 pagination_class attribute를 지정하여 pagination을 custom할 수 있다.
+
+### 6. RetrieveAPIView
+
+- api/vi/rooms/\<id:pk\>형식으로 된 view를 만들고 싶을 때 사용하면 된다.
+- 기본적으로 ListAPIView와 비슷하게 만들어주면 된다.
+  ```python
+  class SeeRoomView(RetrieveAPIView):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializer
+  ```
+- 참 재밌는 부분은 queryset에 특정 부분을 filtering 하도록 하는 것이 아니라, 모든 queryset을 다 준다는 것..
+  - rest framework가 알아서 다 해주는 것.
+  - lookup_field, lookup_rul_kwargs 라는 것이 있는데, 이것이 기본적으로 pk로 되어 있기 때문.
+
+### 7. ModelViewSet
+
+- 일단 viewset.py를 만들어준다.
+  ```python
+    from rest_framework import viewsets
+    class RoomViewset(viewsets.ModelViewSet):
+      queryset = Room.objects.all()
+      serializer_class = RoomSerializer
+  ```
+  - 사실은 ListAPIView 등에서 했던 방법들과 똑같다.
+- url pattern도 제공해주는 부분이 있으므로, urls.py도 새로 만들어 줘야 한다.
+
+  ```python
+    from rest_framework.routers import DefaultRouter
+
+    router = DefaultRouter()
+    router.register ("", viewsets.RoomViewset, basename="room")
+
+    urlpatterns = router.urls
+  ```
+
+  - 이렇게 해주면 위에서 했던 내용과 거의 똑같이 작동한다.
+  - 문제는 보안.
+    - CRUD를 모두 다룰 수 있도록 해주기 때문에 이런 부분은 설정이 필요하다.
+
 ## Graphql Python
