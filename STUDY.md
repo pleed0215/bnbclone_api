@@ -252,4 +252,14 @@
 
   - field를 한 개씩만 validation을 할 때에는 위의 방법으로 하면 되지만, data가 연계되어 있다고 하면, validate 함수를 overriding을 해야 한다.
 
+- updating
+  - instance, validate_data 두가지를 argument로 받는다.
+  - Serializer에 partial argument -> 내가 원하는 data만 보내겠다라는 뜻..
+    - 수정할 때 data valid error가 나는데, 이것을 해결하려면 partial argument True로 넘겨주면 된다.
+    - data를 수정하고 싶은데 전체를 다 보낼 순 없잖어..
+    - 아직 에러가 수정되지 않는데, 그 이유는 수정 때에도 validation이 실행되기 때문에.
+    - Serializer에 instance attribute가 None이 아니면, updating 중이라.. validation에서 한 번 걸러줘야 한다.
+      - 각각 data를 validation하려는,  validation_{field} 방법은 사용하지 말아야 겠다.
+      - 왜냐하면, instance 거르는 작업에서 막힌다.
+
 ## Graphql Python

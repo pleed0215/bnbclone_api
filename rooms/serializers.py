@@ -34,11 +34,12 @@ class WriteRoomSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Room.objects.create(**validated_data)
 
-    def validate_beds(self, beds):
-        if beds < 3:
-            raise serializers.ValidationError("Your room is too small.")
-        else:
-            return beds
+    def validate(self, data):
+        if self.instance is None:
+            beds = data["beds"]
+            if beds < 3:
+                raise serializers.ValidationError("Your room is too small.")
+        return data
 
 
 class TinyRoomSerializer(serializers.ModelSerializer):
