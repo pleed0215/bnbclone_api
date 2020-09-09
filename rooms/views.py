@@ -62,7 +62,7 @@ class RoomListView(APIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         serializer = WriteRoomSerializer(data=request.data)
-        print(serializer.is_valid())
+
         if serializer.is_valid():
             room = serializer.save(user=request.user)
             room_serialized = ReadRoomSerializer(room).data
@@ -95,8 +95,15 @@ class RoomDetailView(APIView):
         if room is not None:
             if room.user != request.user:
                 return Response(status=status.HTTP_403_FORBIDDEN)
+            print(request.data)
             room_serialized = WriteRoomSerializer(room, data=request.data, partial=True)
-            return Response(data=room_serialized.data)
+            if room_serialized.is_valid():
+                room = room_serialized.save()
+                return Response(
+                    data=ReadRoomSerializer(room).data, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
