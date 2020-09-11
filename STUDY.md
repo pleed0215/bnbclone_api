@@ -253,22 +253,28 @@
   - field를 한 개씩만 validation을 할 때에는 위의 방법으로 하면 되지만, data가 연계되어 있다고 하면, validate 함수를 overriding을 해야 한다.
 
 - updating
+
   - instance, validate_data 두가지를 argument로 받는다.
   - Serializer에 partial argument -> 내가 원하는 data만 보내겠다라는 뜻..
+
     - 수정할 때 data valid error가 나는데, 이것을 해결하려면 partial argument True로 넘겨주면 된다.
     - data를 수정하고 싶은데 전체를 다 보낼 순 없잖어..
     - 아직 에러가 수정되지 않는데, 그 이유는 수정 때에도 validation이 실행되기 때문에.
     - Serializer에 instance attribute가 None이 아니면, updating 중이라.. validation에서 한 번 걸러줘야 한다.
+
       - 각각 data를 validation하려는, validation\_{field} 방법은 사용하지 말아야 겠다.
       - 왜냐하면, instance 거르는 작업에서 막힌다.
       - validate 사용하기 위해서는, is_valid를 호출해야 한다.
+
       ```python
             if room_serialized.is_valid():
                 room_serialized.save()
       ```
+
       - 호출 후에는 data validation이 확인된 것이기 때문에, serializer의 save method를 호출한다.
       - save method가 호출되면 곧, serializer의 update method가 호출된다.
       - update method
+
         ```python
         class WriterSerializer(serializers.Serializer):
           ...
@@ -279,6 +285,7 @@
             instance.save()
             return instance
         ```
+
         - validated_data에는 validated된 data가 들어가는데, data update 할 때에는 어떤 데이터가 update될지는 모르므로,
           - 모든 field에 대해 update한다고 가정하면 된다.
           ```python
@@ -286,5 +293,13 @@
             ....
           ```
           - validated_data에 필드가 없다면, update하려는 속성이 아니므로, skip 하면된다. get 함수 사용 시 key값이 없다면 None이되므로, 위와 같이 해준 것.
+
+  - magic way
+    - ModelSerializer를 사용해도 된다.
+
+- Authenticate
+  - rest_framework.permission.IsAuthenticated
+  - APIView에서 <code>permission_classses = [IsAuthenticated]</code> 등으로 사용하면 된다.
+    - 그럼 request.user.is_authenticated 등으로 사용하지 않아도 사용할 수 있다.
 
 ## Graphql Python

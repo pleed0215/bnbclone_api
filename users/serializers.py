@@ -2,7 +2,26 @@ from rest_framework import serializers
 from .models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
+class RelatedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "superhost",
+        )
+
+
+class TinyUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "superhost")
+
+
+class ReadUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = (
@@ -13,12 +32,18 @@ class UserSerializer(serializers.ModelSerializer):
             "is_superuser",
             "is_staff",
             "date_joined",
-            "favs",
             "is_active",
         )
 
 
-class TinyUserSerializer(serializers.ModelSerializer):
+class WriteUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("username", "superhost")
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "superhost",
+        )
