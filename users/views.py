@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from .serializers import ReadUserSerializer, WriteUserSerializer
+from .serializers import ReadUserSerializer, WriteUserSerializer, FavsSerializer
 from .models import User
 
 # Create your views here.
@@ -46,17 +46,11 @@ def user_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(
-    [
-        "GET",
-        "PUT",
-    ]
-)
-@permission_classes(
-    [
-        IsAuthenticated,
-    ]
-)
-def toggle_fav_view(request):
+class FavsView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    return Response(status=status.HTTP_200_OK)
+    def get(self, request):
+
+        return Response(
+            data=FavsSerializer(request.user).data, status=status.HTTP_200_OK
+        )

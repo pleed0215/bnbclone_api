@@ -88,3 +88,9 @@ class TinyRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ("name", "user", "price", "bedrooms", "bathrooms", "beds")
+
+
+class RelatedRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = ("name", "price", "bedrooms", "bathrooms", "beds")
