@@ -18,17 +18,16 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(
-            data=ReadUserSerializer(
-                request.user,
-            ).data,
-            status=status.HTTP_200_OK,
+            data=ReadUserSerializer(request.user,).data, status=status.HTTP_200_OK,
         )
 
     def put(self, request):
-        serializer = WriteUserSerializer(request.data, data=request.data, partial=True)
+        serializer = WriteUserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            updated = serializer.save()
+            return Response(
+                data=ReadUserSerializer(updated).data, status=status.HTTP_200_OK
+            )
         else:
             return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 

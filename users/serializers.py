@@ -47,3 +47,6 @@ class WriteUserSerializer(serializers.ModelSerializer):
             "avatar",
             "superhost",
         )
+
+    def validate_first_name(self, value):
+        return value.capitalize()
