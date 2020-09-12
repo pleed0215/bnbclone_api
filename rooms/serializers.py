@@ -18,7 +18,28 @@ class ReadRoomSerializer(serializers.ModelSerializer):
         exclude = ("modified",)
 
 
-class WriteRoomSerializer(serializers.Serializer):
+class WriteRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        exclude = ("user", "modified", "created")
+
+    def validate(self, data):
+        if self.instance is None:
+            beds = data["beds"]
+            if beds < 3:
+                raise serializers.ValidationError("Your room is too small.")
+        print(data)
+        return data
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        exclude = ("modified",)
+        read_only_fields = ("user", "id", "created", "modified")
+
+    # class WriteRoomSerializer(serializers.Serializer):
+    """ 
     name = serializers.CharField(max_length=140)
     address = serializers.CharField(max_length=140)
     price = serializers.IntegerField(help_text="USD per night")
@@ -58,6 +79,7 @@ class WriteRoomSerializer(serializers.Serializer):
         )
         instance.save()
         return instance
+    """
 
 
 class TinyRoomSerializer(serializers.ModelSerializer):

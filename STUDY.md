@@ -298,8 +298,14 @@
     - ModelSerializer를 사용해도 된다.
 
 - Authenticate
+
   - rest_framework.permission.IsAuthenticated
   - APIView에서 <code>permission_classses = [IsAuthenticated]</code> 등으로 사용하면 된다.
     - 그럼 request.user.is_authenticated 등으로 사용하지 않아도 사용할 수 있다.
+
+- Read / Write Serializer
+  - ModelSerializer 하나로 통일 할 수 있다.
+  - field 중에 edit하면 안되는 field는 read_only_fields 사용하면 된다.
+    - 위 속성에 넣어준 필드는 validation에 빠진다.
 
 ## Graphql Python
