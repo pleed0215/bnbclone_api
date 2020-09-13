@@ -304,8 +304,15 @@
     - 그럼 request.user.is_authenticated 등으로 사용하지 않아도 사용할 수 있다.
 
 - Read / Write Serializer
+
   - ModelSerializer 하나로 통일 할 수 있다.
   - field 중에 edit하면 안되는 field는 read_only_fields 사용하면 된다.
     - 위 속성에 넣어준 필드는 validation에 빠진다.
+
+- Write only field
+  - password를 만들 때, serializer에 어쩔 수 없이 password field를 포함시켜줘야 하는데,
+  - 문제는 다른 사람들이 패스워드를 볼 수도 있다는 것..
+  - 그래서 password를 write_only field로 만들어주면 된다.
+    - <code>password = serializers.CharField(write_only=True)</code>
 
 ## Graphql Python

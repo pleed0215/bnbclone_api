@@ -11,6 +11,20 @@ from .models import User
 from rooms.models import Room
 from rooms.serializers import RoomSerializer
 
+
+class UsersView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serialized = serializer.save()
+            return Response(
+                data=UserSerializer(serialized).data, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(seriailzer.error, status=status.HTTP_400_BAD_REQUEST)
+
+
 # Create your views here.
 class MeView(APIView):
 

@@ -4,6 +4,8 @@ from rooms import serializers as rooms_serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -14,12 +16,20 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "avatar",
             "superhost",
+            "password",
         )
         read_only_fields = (
             "id",
             "avatar",
             "superhost",
         )
+
+    def create(self, validated_data):
+        password = validated_data.get("password")
+        user = super().create(validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
 
 class RelatedUserSerializer(serializers.ModelSerializer):
