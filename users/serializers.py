@@ -3,6 +3,25 @@ from .models import User
 from rooms import serializers as rooms_serializers
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "superhost",
+        )
+        read_only_fields = (
+            "id",
+            "avatar",
+            "superhost",
+        )
+
+
 class RelatedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

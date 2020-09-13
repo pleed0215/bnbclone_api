@@ -6,8 +6,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from .serializers import ReadUserSerializer, WriteUserSerializer, FavsSerializer
+from .serializers import UserSerializer, FavsSerializer
 from .models import User
+from rooms.models import Room
+from rooms.serializers import RoomSerializer
 
 # Create your views here.
 class MeView(APIView):
@@ -18,18 +20,15 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(
-            data=ReadUserSerializer(
-                request.user,
-            ).data,
-            status=status.HTTP_200_OK,
+            data=UserSerializer(request.user,).data, status=status.HTTP_200_OK,
         )
 
     def put(self, request):
-        serializer = WriteUserSerializer(request.user, data=request.data, partial=True)
+        serializer = UserSerializer(request.user, data=request.data, partial=True)
         if serializer.is_valid():
             updated = serializer.save()
             return Response(
-                data=ReadUserSerializer(updated).data, status=status.HTTP_200_OK
+                data=UserSerializer(updated).data, status=status.HTTP_200_OK
             )
         else:
             return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +49,26 @@ class FavsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        user = request.user
+        rooms = user.favs.all()
+        serialized = RoomSerializer(rooms, many=True).data
+        return Response(data=serialized, status=status.HTTP_200_OK)
 
-        return Response(
-            data=FavsSerializer(request.user).data, status=status.HTTP_200_OK
-        )
+    def put(self, request):
+        pk = request.data.get("pk")
+        if pk is not None:
+            try:
+                room = Room.objects.get(pk=pk)
+                user = request.user
+                if room in user.favs.all():
+                    user.favs.remove(room)
+                else:
+                    user.favs.add(room)
+                return Response(
+                    data=RoomSerializer(user.favs.all(), many=True).data,
+                    status=status.HTTP_200_OK,
+                )
+            except Room.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
