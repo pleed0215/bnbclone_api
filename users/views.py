@@ -1,4 +1,7 @@
+import jwt
 from django.shortcuts import render
+from django.contrib.auth import authenticate
+from django.conf import settings
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -22,7 +25,7 @@ class UsersView(APIView):
                 data=UserSerializer(serialized).data, status=status.HTTP_200_OK
             )
         else:
-            return Response(seriailzer.error, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Create your views here.
@@ -34,7 +37,10 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(
-            data=UserSerializer(request.user,).data, status=status.HTTP_200_OK,
+            data=UserSerializer(
+                request.user,
+            ).data,
+            status=status.HTTP_200_OK,
         )
 
     def put(self, request):
@@ -52,9 +58,7 @@ class MeView(APIView):
 def user_detail(request, pk):
     try:
         requested = User.objects.get(pk=pk)
-        return Response(
-            data=ReadUserSerializer(requested).data, status=status.HTTP_200_OK
-        )
+        return Response(data=UserSerializer(requested).data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -86,3 +90,21 @@ class FavsView(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        encoded_jwt = jwt.encode(
+            {"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256"
+        )
+        return Response(data={"token": encoded_jwt}, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)

@@ -307,12 +307,66 @@
 
   - ModelSerializer 하나로 통일 할 수 있다.
   - field 중에 edit하면 안되는 field는 read_only_fields 사용하면 된다.
+
     - 위 속성에 넣어준 필드는 validation에 빠진다.
 
+    ```python
+    import jwt
+    from django.conf import settings
+    ...
+    ...
+    @api_view(["POST"])
+    def login(request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        if not username or not password:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            # 여기가 settings는 config/settings.py의 SECRET_KEY, django.conf.settings import 하여 사용한다.
+            encoded_jwt = jwt.encode(
+                {"id": "user.pk"}, settings.SECRET_KEY, algorithm="HS256"
+            )
+            return Response(data={"token": encoded_jwt}, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+    ```
+
+    - 비밀 번호 등 민감한 정보는 절대로 jwt에 들어가면 안된다. user 식별자 정도만 사용하는 것이 좋다.
+    - 만들어진 token은 누군가 봤냐 안 봤냐가 중요한 문제가 아니다. 왜냐하면 쉽게 해독되지 않기 때문에..
+      - 중요한점은 누군가가 token 값을 건드렸는지 여부이다.
+
+- decode JWT
+
+  ## Setting the authentication scheme
+
+  The default authentication schemes may be set globally, using the DEFAULT_AUTHENTICATION_CLASSES setting. For example.
+
+  ```python
+  REST_FRAMEWORK = {
+      'DEFAULT_AUTHENTICATION_CLASSES': [
+          'rest_framework.authentication.BasicAuthentication',
+          'rest_framework.authentication.SessionAuthentication',
+      ]
+  }
+  ```
+
+  이 내용을 settings.py에 추가해야 한다.
+
+  - Custom authentification을 만들 수도 있다.
+  - rest framework 문서에서 authentication 파트 참고.
+
 - Write only field
+
   - password를 만들 때, serializer에 어쩔 수 없이 password field를 포함시켜줘야 하는데,
   - 문제는 다른 사람들이 패스워드를 볼 수도 있다는 것..
   - 그래서 password를 write_only field로 만들어주면 된다.
     - <code>password = serializers.CharField(write_only=True)</code>
+
+- JWT(JSON Web Token)
+  - auth 관련 json 암호화 시켜 로그인 관련 일을 하는 것.
+  - pyjwt 패키지 인스톨하자.
 
 ## Graphql Python
