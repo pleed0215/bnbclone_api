@@ -11,7 +11,7 @@ class JWTAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
         try:
             token = request.META.get("HTTP_AUTHORIZATION")
-            print(token)
+            print("token", token)
             if token is None:
                 return None
             x_jwt, jwt_token = token.split(" ")

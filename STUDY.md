@@ -366,7 +366,61 @@
     - <code>password = serializers.CharField(write_only=True)</code>
 
 - JWT(JSON Web Token)
+
   - auth 관련 json 암호화 시켜 로그인 관련 일을 하는 것.
   - pyjwt 패키지 인스톨하자.
+  - login을 직접적으로 이뤄주는 것은 아니고 token을 제공해주는 방식으로 하는 것..
+
+  ```python
+    @api_view(["POST"])
+    def login(request):
+      username = request.data.get("username")
+      password = request.data.get("password")
+
+      if not username or not password:
+          return Response(status=status.HTTP_400_BAD_REQUEST)
+
+      user = authenticate(username=username, password=password)
+      if user is not None:
+          encoded_jwt = jwt.encode(
+              {"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256"
+          )
+          return Response(data={"token": encoded_jwt}, status=status.HTTP_200_OK)
+      else:
+          return Response(status=status.HTTP_401_UNAUTHORIZED)
+  ```
+
+  - 위 해당 코드는 token을 리턴해준다.
+  - 위 받은 jwt를 decode해주는 작업이 필요하다.
+    - config.authentication을 참고해야 한다.
+    - rest framework의 authentication을 상속받아서 만든다.
+
+  ```python
+    class JWTAuthentication(authentication.BaseAuthentication):
+      def authenticate(self, request):
+          try:
+              token = request.META.get("HTTP_AUTHORIZATION")
+
+              if token is None:
+                  # 공식문서에 token 없으면 None을 리턴하라 되어 있음.
+                  return None
+              x_jwt, jwt_token = token.split(" ")
+              decoded = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms="HS256")
+              pk = decoded.get("pk")
+              user = User.objects.get(pk=pk)
+              print(user)
+              return (user, None)
+          except (ValueError, jwt.exceptions.DecodeError, User.DoesNotExist):
+              return None
+  ```
+
+      - META data는 request 할 때 Header에 넘겨주는 data인가..? 아무튼 header에 HTTP_AUTHORIZATION으로 헤더에서 토큰을 넘겨줘야 한다.
+        <code>
+        Authroization: "X-JWT ~~TOKEN~~"
+        </code>
+      - 리턴 방식이 좀 특이하다. tuple로 리턴을 해준다.
+
+  - 참고로 rest_framework에서 제공해주는 TokenAuthentication과는 완전히 별개. 서버측면에서는 JWT가 더 좋다.
+    - 왜냐하면 TokenAuthentication은 token을 user 생성할 때 같이 저장해주기 때문이다.
 
 ## Graphql Python
