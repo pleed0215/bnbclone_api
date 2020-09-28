@@ -16,9 +16,7 @@ urlpatterns = router.urls"""
 
 # due to use viewset, re-write this part, above.
 urlpatterns = [
-    path(
-        "list/",
-        views.RoomListView.as_view(),
-    ),
+    path("list/", views.RoomListView.as_view(),),
     path("<int:pk>/", views.RoomDetailView.as_view()),
+    path("search/", views.room_search,),
 ]

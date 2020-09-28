@@ -423,4 +423,17 @@
   - 참고로 rest_framework에서 제공해주는 TokenAuthentication과는 완전히 별개. 서버측면에서는 JWT가 더 좋다.
     - 왜냐하면 TokenAuthentication은 token을 user 생성할 때 같이 저장해주기 때문이다.
 
+  ### 2.14 manual pagination
+
+  - rest_framework.paginator.PageNumberPagination
+    - page number에 따라 pagination을 쉽게 할 수 있게 만들어주는 class
+    ```python
+      paginator = PageNumberPagination()
+      paginator.page_size = 20 # 원하는 크기대로!
+      results = paginator.paginate_queryset(queryset, request)
+      ~~~
+      # return Response(results) Response보다 paginator.get_paginated_response를 사용하자.
+      return paginator.get_paginated_response(serializer.data)
+    ```
+
 ## Graphql Python
