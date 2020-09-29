@@ -440,15 +440,45 @@
 
   ### 3.0
 
-      - Method Serializer
-        - active field를 만들기 위한..
-          - active field는 이를테면 favorite list에 있는지 없는지 여부를 알려주는 필드가 있다하면, "is_fav"등의 필드를 만들어야 할 것.
-            - <code>is_fav = serializers.SerializerMethodField()</code>
-            - 위와 같이 만들어주면 된다. 그리고 나서, 위 field를 채워줄 method를 만들어줘야 한다.
-            - > def get_"method_field"(self, obj)
-              - SeiralizerMethodField(method_name=''), method_name 옵션으로 method 이름을 바꿀 수가 있다.
-            - Serializer에 user data를 넘겨줘야 한다. 누가 request하는지..알려면..
-              - <code>RoomSerializer(query_set, context={"request": request})</code>
-              - 이렇게 넘겨주면 된다.
+        - Method Serializer
+          - active field를 만들기 위한..
+            - active field는 이를테면 favorite list에 있는지 없는지 여부를 알려주는 필드가 있다하면, "is_fav"등의 필드를 만들어야 할 것.
+              - <code>is_fav = serializers.SerializerMethodField()</code>
+              - 위와 같이 만들어주면 된다. 그리고 나서, 위 field를 채워줄 method를 만들어줘야 한다.
+              - > def get_"method_field"(self, obj)
+                - SeiralizerMethodField(method_name=''), method_name 옵션으로 method 이름을 바꿀 수가 있다.
+              - Serializer에 user data를 넘겨줘야 한다. 누가 request하는지..알려면..
+                - <code>RoomSerializer(query_set, context={"request": request})</code>
+                - 이렇게 넘겨주면 된다.
+
+  ### 3.1
+
+      - ModelViewSet
+        - reset_framework.viewsets.ModelViewSet
+        - list, create, retrieve, update, partial_update, destroy
+      - reset_framework.router.DefaultRouter
+        - 위에 나왔음.
+      - permissions_classes 다시 언급.
+        - def get_permissions(self)를 overriding 해야..
+          - 코드를 참조하면 get_permission을 어떻게 만드는지 알 수 있ㄷ.
+        - permission 중에 model의 owner인지를 확인해야 하는 경우가 있을 수 있다.
+          - 이를테면, delete나 update 등을 할 때..
+          - rest_framework.permissions.BasePermission을 상속받아서 새로 클래스를 만들어 줘야 한다.
+            - has_permission(self, request, view), has_object_permission(self, request, view, obj) 등을 overriding 해야 한다.
+          - RoomSerializer에서 user field 를 read_only=True 옵션을 추가했다. 이상하게 read_only_fields 작동 안함? 난 잘 몰겠는데.
+        - ViewSet이 아무리 많은 일을 해준다해도 overriding해서 해야할 일이 있음.
+          - 예를들어, create 때 foreignkey 관련하여 user pk를 입력해줘야 하는데, 이는 그냥 해주는 것이 아니라 overriding 해서 작업을 해줘야한다.
+            ```python
+              class RoomSerializer(serializers.ModelSerializer):
+                ...
+                def create(self, validated_data):
+                  # field = validated_data.get('field')
+                  # 또는 field = validated_data.pop('field')
+                  room = Room.objects.create(**validated_data)
+                  return room
+            ```
+          - 위 코드에 어떤 문제가 있냐하면, user 정보를 어떻게 가져올 것인가 하는 문제가 남는데, request 정보를 받아와야 한다.
+            - classy drf에서 보면, request 데이터는 def get_serializer_context에서 얻는다.
+            - 즉, serializer에서 context정보를 넘겨줘야 하고, 넘겨주는 것을 받는 것은 get_serializer_context에서 받을 수 있다는 것.
 
 ## Graphql Python

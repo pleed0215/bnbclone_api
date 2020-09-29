@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Room
-from users.serializers import TinyUserSerializer, RelatedUserSerializer
+from users.serializers import TinyUserSerializer, RelatedUserSerializer, UserSerializer
 
 
 """class RoomSerializer(serializers.Serializer):
@@ -43,6 +43,16 @@ class RoomSerializer(serializers.ModelSerializer):
                 return obj in user.favs.all()
             else:
                 return None
+        else:
+            return None
+
+    user = UserSerializer(read_only=True)
+
+    def create(self, validated_data):
+        request = self.context.get("request")
+        if request.user is not None and request.user.is_authenticated:
+            room = Room.objects.create(**validated_data, user=request.user)
+            return room
         else:
             return None
 
