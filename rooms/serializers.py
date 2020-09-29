@@ -33,6 +33,19 @@ class WriteRoomSerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
+    in_favorite = serializers.SerializerMethodField()
+
+    def get_in_favorite(self, obj):
+        request = self.context.get("request")
+        if request is not None:
+            user = request.user
+            if user is not None and user.is_authenticated:
+                return obj in user.favs.all()
+            else:
+                return None
+        else:
+            return None
+
     class Meta:
         model = Room
         exclude = ("modified",)

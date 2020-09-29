@@ -436,4 +436,19 @@
       return paginator.get_paginated_response(serializer.data)
     ```
 
+  ## 3 MAGIC And Powder
+
+  ### 3.0
+
+      - Method Serializer
+        - active field를 만들기 위한..
+          - active field는 이를테면 favorite list에 있는지 없는지 여부를 알려주는 필드가 있다하면, "is_fav"등의 필드를 만들어야 할 것.
+            - <code>is_fav = serializers.SerializerMethodField()</code>
+            - 위와 같이 만들어주면 된다. 그리고 나서, 위 field를 채워줄 method를 만들어줘야 한다.
+            - > def get_"method_field"(self, obj)
+              - SeiralizerMethodField(method_name=''), method_name 옵션으로 method 이름을 바꿀 수가 있다.
+            - Serializer에 user data를 넘겨줘야 한다. 누가 request하는지..알려면..
+              - <code>RoomSerializer(query_set, context={"request": request})</code>
+              - 이렇게 넘겨주면 된다.
+
 ## Graphql Python

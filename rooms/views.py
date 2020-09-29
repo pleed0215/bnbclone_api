@@ -12,7 +12,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Room
-from .serializers import ReadRoomSerializer, TinyRoomSerializer, WriteRoomSerializer
+from .serializers import (
+    ReadRoomSerializer,
+    TinyRoomSerializer,
+    WriteRoomSerializer,
+    RoomSerializer,
+)
 
 
 # Create your views here.
@@ -57,9 +62,11 @@ class RoomListView(APIView):
     def get(self, request):
         paginator = PageNumberPagination()
         paginator.page_size = 20
-        rooms = Room.objects.all()[:5]
+        rooms = Room.objects.all()
         result = paginator.paginate_queryset(rooms, request)
-        rooms_serialized = ReadRoomSerializer(result, many=True)
+        rooms_serialized = RoomSerializer(
+            result, many=True, context={"request": request}
+        )
         return Response(data=rooms_serialized.data)
 
     def post(self, request):
@@ -99,7 +106,6 @@ class RoomDetailView(APIView):
         if room is not None:
             if room.user != request.user:
                 return Response(status=status.HTTP_403_FORBIDDEN)
-            print(request.data)
             room_serialized = WriteRoomSerializer(room, data=request.data, partial=True)
             if room_serialized.is_valid():
                 room = room_serialized.save()
@@ -175,10 +181,12 @@ def room_search(request):
     paginator = PageNumberPagination()
     paginator.page_size = 10
     try:
-        print(filter_kwargs)
         rooms = Room.objects.filter(**filter_kwargs)
     except ValueError:
-        return Response(data=None, status=status.HTTP_400_BAD_REQUEST,)
+        return Response(
+            data=None,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     results = paginator.paginate_queryset(rooms, request)
     serializers = ReadRoomSerializer(results, many=True)
 
