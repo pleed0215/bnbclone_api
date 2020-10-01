@@ -481,4 +481,19 @@
             - classy drf에서 보면, request 데이터는 def get_serializer_context에서 얻는다.
             - 즉, serializer에서 context정보를 넘겨줘야 하고, 넘겨주는 것을 받는 것은 get_serializer_context에서 받을 수 있다는 것.
 
+  ### 3.4 Search in viewset
+
+  - ViewSet을 이용하면 search를 어떻게 추가 할 수 있을까..?
+    - @action decorator를 이용하여야 한다.
+      - detail 옵션이 True, False인지를 정해줘야 하는데,
+        - True인 경우에는, 이를테면 room/1 이런식으로 pk에 해당하게 적용된다.
+        - False인 경우에는, pk에 적용되는 것이 아님.
+        ```python
+          @action(detail=False)
+          def search(self, request):
+            pass
+        ```
+        - viewset 안에 위 함수를 정의해주면 해당 함수 이름으로 route가 만들어진다.
+        - url_path, url_name 등의 옵션을 주면 경로를 바꿔줄 수 있다.
+
 ## Graphql Python
