@@ -496,4 +496,6 @@
         - viewset 안에 위 함수를 정의해주면 해당 함수 이름으로 route가 만들어진다.
         - url_path, url_name 등의 옵션을 주면 경로를 바꿔줄 수 있다.
 
+  ### 3.5 UsersViewSet
+
 ## Graphql Python
