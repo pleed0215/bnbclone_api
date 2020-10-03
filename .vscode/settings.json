@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/Users/pleed0215/.local/share/virtualenvs/bnbclone_api-cU6azb0h/bin/python",
+    "python.pythonPath": "C:\\Users\\pleed0215\\.virtualenvs\\bnbclone_api-SqGUOyvN\\Scripts\\python.exe",
     "python.formatting.provider": "black",
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
