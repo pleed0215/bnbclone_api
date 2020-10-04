@@ -27,12 +27,17 @@ class UsersViewSet(viewsets.ModelViewSet):
             permission_classes = [
                 AllowAny,
             ]
-        elif self.action == "retrieve" or self.action == "me":
+        elif (
+            self.action == "retrieve"
+            or self.action == "me"
+            or self.action == "update"
+            or self.action == "partial_update"
+        ):
             permission_classes = [
                 IsUserOwner,
             ]
         else:
-            permission_classes = [IsUserOwner, IsAdminUser]
+            permission_classes = [IsUserOwner]
 
         return [permissions() for permissions in permission_classes]
 
