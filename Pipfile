@@ -13,6 +13,7 @@ pillow = "*"
 django-seed = "*"
 djangorestframework = "*"
 pyjwt = "*"
+rest-condition = "*"
 
 [requires]
 python_version = "3.7"

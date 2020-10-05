@@ -498,4 +498,61 @@
 
   ### 3.5 UsersViewSet
 
+  - action 추가시 detail=True 옵션을 준 경우에는 함수에 pk인자를 따로 넘겨준다.
+    ```python
+      @action(detail=True)
+      def favs(self, request, pk):
+        pass
+    ```
+    - favs에 만약 put method를 추가하고 싶은데, 다른 함수에서 하고 싶으면..?
+      - decorator를 활용하면 된다.
+      ```python
+        @favs.mapping.put
+        def toggle_favs(self, request, pk):
+          pass
+      ```
+      - 물론 request.method 확인해서 한 함수에서 해도 무방하다.
+
+  ### 3.8 conclusion
+
+  - WSGIPassAuthorization On
+
+    - server config, virtual host, directory or .htaccess에 위의 내용을 추가해줘야 HTTP_AHTORIZATION 헤더를 사용할 수 있다.
+    - AWS EB나 apache mod_wsgi 사용하는 경우에는 반드시 추가해줘야 한다.
+    - eb 배포시에는 container_commands에 추가해줘도 된다.
+      ```sh
+        commands: 'echo "WSGIPassAuthorization On" >> ../wsgi.conf'
+      ```
+
+  - renderes
+
+    - rest_framework에서 기본적으로 화면에 보여주는 일종의 템플릿 렌더러? 라고 봐야 하나..
+
+    ```python
+      REST_FRAMEWORK= {
+        'DEFAULT_RENDERER_CLASSES': [
+          'rest_framework.renderers.JSONRenderer',
+          'rest_framework.renderers.BrowsableAPIRenderer'
+        ]
+      }
+    ```
+
+    - 기본으로는 이렇게 되어 있는데, 배포모드에서는 끄는게 좋다.
+
+  - throttling
+    - request 제한 걸어 놓는 것.. 배포모드에서는 아무래도 필요하지.
+    ```python
+      REST_FRAMEWORK = {
+        'DEFAULT_THROTTLE_CLASSES': [
+          'rest_framework.throttling.AnonRateThrottle',
+          'rest_framework.throttling.UserRateThrottle',
+        ],
+        'DEFAULT_THROTTLE_RATES': {
+          'anon': '100/day', # 익명은 하루에 100회
+          'user': '1000/day' # 유저는 하루에 1000회 요청할 수 있게..
+        }
+      }
+    ```
+  - versioning, caching, filtering, validation
+
 ## Graphql Python
