@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room
+from .models import Room, Photo
 from users.serializers import TinyUserSerializer, RelatedUserSerializer, UserSerializer
 
 
@@ -8,6 +8,12 @@ from users.serializers import TinyUserSerializer, RelatedUserSerializer, UserSer
     price = serializers.IntegerField(default=1)
     bedrooms = serializers.IntegerField(default=1)
     bathrooms = serializers.IntegerField(default=1)"""
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = '__all__'
 
 
 class ReadRoomSerializer(serializers.ModelSerializer):
