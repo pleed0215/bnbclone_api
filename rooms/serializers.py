@@ -10,10 +10,10 @@ from users.serializers import TinyUserSerializer, RelatedUserSerializer, UserSer
     bathrooms = serializers.IntegerField(default=1)"""
 
 
-class PhotoSerializer(serializers.ModelSerializer):
+class SmallPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
-        fields = '__all__'
+        fields = ('file', 'caption', 'room', )
 
 
 class ReadRoomSerializer(serializers.ModelSerializer):
