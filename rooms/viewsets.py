@@ -45,7 +45,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         if max_price is not None:
             filter_kwargs["price__lte"] = max_price
         if beds is not None:
-            filter["beds__gte"] = beds
+            filter_kwargs["beds__gte"] = beds
         if lat is not None and lng is not None:
             filter_kwargs["lat__gte"] = float(lat) - 0.005
             filter_kwargs["lat__lte"] = float(lat) + 0.005
