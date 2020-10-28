@@ -53,6 +53,7 @@ class RoomSerializer(serializers.ModelSerializer):
             return None
 
     user = UserSerializer(read_only=True)
+    photo = PhotoSerializer(many=True)
 
     def create(self, validated_data):
         request = self.context.get("request")
