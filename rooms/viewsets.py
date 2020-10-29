@@ -68,7 +68,7 @@ class RoomViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         results = paginator.paginate_queryset(rooms, request)
-        serializers = RoomSerializer(results, many=True)
+        serializers = RoomSerializer(results, many=True, context={"request": request})
 
         # return Response(data=serializers.data)
         return paginator.get_paginated_response(serializers.data)
