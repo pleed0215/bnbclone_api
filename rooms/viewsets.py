@@ -49,10 +49,19 @@ class RoomViewSet(viewsets.ModelViewSet):
         if beds is not None:
             filter_kwargs["beds__gte"] = beds
         if lat1 is not None and lng1 is not None and lat2 is not None and lng2 is not None:
-            filter_kwargs["lat__gte"] = float(lat1)
-            filter_kwargs["lng__gte"] = float(lng1)
-            filter_kwargs["lat__lte"] = float(lat2)
-            filter_kwargs["lng__lte"] = float(lng2)
+            flat1 = float(lat1)
+            flat2 = float(lat2)
+            flng1 = float(lng1)
+            flng2 = float(lng2)
+            gt_lat = flat1 >= flat2 and flat1 or flat2
+            lt_lat = flat1 < flat2 and flat1 or flat2
+            lt_lng = flng1 >= flng2 and flng1 or flng2
+            gt_lng = flng1 < flng2 and flng1 or flng2
+
+            filter_kwargs["lat__gte"] = lt_lat
+            filter_kwargs["lng__gte"] = lt_lng
+            filter_kwargs["lat__lte"] = gt_lat
+            filter_kwargs["lng__lte"] = gt_lng
         if bedrooms is not None:
             filter_kwargs["bedrooms__gte"] = bedrooms
         if bathrooms is not None:
