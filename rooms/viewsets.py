@@ -39,7 +39,6 @@ class RoomViewSet(viewsets.ModelViewSet):
         bathrooms = request.GET.get("bathrooms", None)
         instant_book = request.GET.get("instant_book", None)
 
-        print(min_price)
 
         filter_kwargs = {}
         if min_price is not None:
@@ -57,6 +56,8 @@ class RoomViewSet(viewsets.ModelViewSet):
             lt_lat = flat1 < flat2 and flat1 or flat2
             lt_lng = flng1 >= flng2 and flng1 or flng2
             gt_lng = flng1 < flng2 and flng1 or flng2
+            print(lat1, lng1, lat2, lng2)
+            print(lt_lat, gt_lat, lt_lng, gt_lng)
 
             filter_kwargs["lat__gte"] = lt_lat
             filter_kwargs["lng__gte"] = lt_lng
