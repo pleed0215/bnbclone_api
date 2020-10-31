@@ -31,8 +31,10 @@ class RoomViewSet(viewsets.ModelViewSet):
         min_price = request.GET.get("min_price", None)
         max_price = request.GET.get("max_price", None)
         beds = request.GET.get("beds", None)
-        lat = request.GET.get("lat", None)
-        lng = request.GET.get("lng", None)
+        lat1 = request.GET.get("lat1", None)
+        lng1 = request.GET.get("lng1", None)
+        lat2 = request.GET.get("lat2", None)
+        lng2 = request.GET.get("lng2", None)
         bedrooms = request.GET.get("bedrooms", None)
         bathrooms = request.GET.get("bathrooms", None)
         instant_book = request.GET.get("instant_book", None)
@@ -46,11 +48,11 @@ class RoomViewSet(viewsets.ModelViewSet):
             filter_kwargs["price__lte"] = max_price
         if beds is not None:
             filter_kwargs["beds__gte"] = beds
-        if lat is not None and lng is not None:
-            filter_kwargs["lat__gte"] = float(lat) - 0.005
-            filter_kwargs["lat__lte"] = float(lat) + 0.005
-            filter_kwargs["lng__gte"] = float(lng) - 0.005
-            filter_kwargs["lng__lte"] = float(lng) + 0.005
+        if lat1 is not None and lng1 is not None and lat2 is not None and lng2 is not None:
+            filter_kwargs["lat__gte"] = float(lat1)
+            filter_kwargs["lng__gte"] = float(lng1)
+            filter_kwargs["lat__lte"] = float(lat2)
+            filter_kwargs["lng__lte"] = float(lng2)
         if bedrooms is not None:
             filter_kwargs["bedrooms__gte"] = bedrooms
         if bathrooms is not None:
