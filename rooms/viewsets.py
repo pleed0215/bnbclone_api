@@ -54,8 +54,8 @@ class RoomViewSet(viewsets.ModelViewSet):
             flng2 = float(lng2)
             gt_lat = flat1 >= flat2 and flat1 or flat2
             lt_lat = flat1 < flat2 and flat1 or flat2
-            lt_lng = flng1 >= flng2 and flng1 or flng2
-            gt_lng = flng1 < flng2 and flng1 or flng2
+            gt_lng = flng1 >= flng2 and flng1 or flng2
+            lt_lng = flng1 < flng2 and flng1 or flng2
             print(lat1, lng1, lat2, lng2)
             print(lt_lat, gt_lat, lt_lng, gt_lng)
 
